@@ -104,18 +104,18 @@ class Database:
             ParkingStartTime = one['parkingStartTime']
             ParkingEndTime = one['parkingEndTime']
 
-        # insert statement
-        insert_stmt = sqlalchemy.text("INSERT INTO Cars (LicensePlate, UserID, ParkingStartTime, ParkingEndTime)"
-        + "VALUES (:LicensePlate, :UserID, NULLIF(:ParkingStartTime, ''), NULLIF(:ParkingEndTime, ''))")
+            # insert statement
+            insert_stmt = sqlalchemy.text("INSERT INTO Cars (LicensePlate, UserID, ParkingStartTime, ParkingEndTime)"
+            + "VALUES (:LicensePlate, :UserID, NULLIF(:ParkingStartTime, ''), NULLIF(:ParkingEndTime, ''))")
 
-        with self.pool.connect() as db_conn:
-                db_conn.execute(
-                    insert_stmt,
-                    LicensePlate=LicensePlate,
-                    UserID=UserID,
-                    ParkingStartTime=ParkingStartTime,
-                    ParkingEndTime=ParkingEndTime
-                )
+            with self.pool.connect() as db_conn:
+                    db_conn.execute(
+                        insert_stmt,
+                        LicensePlate=LicensePlate,
+                        UserID=UserID,
+                        ParkingStartTime=ParkingStartTime,
+                        ParkingEndTime=ParkingEndTime
+                    )
 
     # car input
     # obj = {
@@ -136,17 +136,17 @@ class Database:
             ParkingNumber = one["parkingNumber"]
             LicensePlate = one["licensePlate"]
 
-        # insert statement
-        insert_stmt = sqlalchemy.text("INSERT INTO ParkingPlaces (ParkingLotName, ParkingNumber, LicensePlate)"
-        + "VALUES (:ParkingLotName, :ParkingNumber, NULLIF(:LicensePlate, ''))")
+            # insert statement
+            insert_stmt = sqlalchemy.text("INSERT INTO ParkingPlaces (ParkingLotName, ParkingNumber, LicensePlate)"
+            + "VALUES (:ParkingLotName, :ParkingNumber, NULLIF(:LicensePlate, ''))")
 
-        with self.pool.connect() as db_conn:
-                db_conn.execute(
-                    insert_stmt,
-                    ParkingLotName=ParkingLotName,
-                    ParkingNumber=ParkingNumber,
-                    LicensePlate=LicensePlate,
-                )
+            with self.pool.connect() as db_conn:
+                    db_conn.execute(
+                        insert_stmt,
+                        ParkingLotName=ParkingLotName,
+                        ParkingNumber=ParkingNumber,
+                        LicensePlate=LicensePlate,
+                    )
 
     # parking place input
     # obj = {
@@ -165,17 +165,17 @@ class Database:
             BlackStartTime = one["blackStartTime"]
             BlackEndTime = one["blackEndTime"]
 
-        # insert statement
-        insert_stmt = sqlalchemy.text("INSERT INTO BlackLists (LicensePlate, BlackStartTime, BlackEndTime)"
-        + "VALUES (:LicensePlate, :BlackStartTime, :BlackEndTime)")
+            # insert statement
+            insert_stmt = sqlalchemy.text("INSERT INTO BlackLists (LicensePlate, BlackStartTime, BlackEndTime)"
+            + "VALUES (:LicensePlate, :BlackStartTime, :BlackEndTime)")
 
-        with self.pool.connect() as db_conn:
-                db_conn.execute(
-                    insert_stmt,
-                    LicensePlate=LicensePlate,
-                    BlackStartTime=BlackStartTime,
-                    BlackEndTime=BlackEndTime,
-                )
+            with self.pool.connect() as db_conn:
+                    db_conn.execute(
+                        insert_stmt,
+                        LicensePlate=LicensePlate,
+                        BlackStartTime=BlackStartTime,
+                        BlackEndTime=BlackEndTime,
+                    )
 
     # black list input
     # obj = {
@@ -196,19 +196,19 @@ class Database:
             ReservationName = one["reservationName"]
             ReservationNumber = one["reservationNumber"]
 
-        # insert statement
-        insert_stmt = sqlalchemy.text("INSERT INTO VIP (LicensePlate, ReservationStartTime, ReservationEndTime, ReservationName, ReservationNumber)"
-        + "VALUES (:LicensePlate, :ReservationStartTime, :ReservationEndTime, :ReservationName, :ReservationNumber)")
+            # insert statement
+            insert_stmt = sqlalchemy.text("INSERT INTO VIP (LicensePlate, ReservationStartTime, ReservationEndTime, ReservationName, ReservationNumber)"
+            + "VALUES (:LicensePlate, :ReservationStartTime, :ReservationEndTime, :ReservationName, :ReservationNumber)")
 
-        with self.pool.connect() as db_conn:
-                db_conn.execute(
-                    insert_stmt,
-                    LicensePlate=LicensePlate,
-                    ReservationStartTime=ReservationStartTime,
-                    ReservationEndTime=ReservationEndTime,
-                    ReservationName=ReservationName,
-                    ReservationNumber=ReservationNumber
-                )
+            with self.pool.connect() as db_conn:
+                    db_conn.execute(
+                        insert_stmt,
+                        LicensePlate=LicensePlate,
+                        ReservationStartTime=ReservationStartTime,
+                        ReservationEndTime=ReservationEndTime,
+                        ReservationName=ReservationName,
+                        ReservationNumber=ReservationNumber
+                    )
                 
     # VIP input
     # obj = {
