@@ -140,7 +140,8 @@ class Database:
                 # this is car instance, not a list
                 cars = db_conn.execute("SELECT LicensePlate FROM Cars WHERE UserID= %s", row[0]).fetchall() 
                 data = {
-                    "userId": row[1],
+                    "userId": row[0],
+                    "account": row[1],
                     "email": row[2],
                     "tele": row[3],
                     "group": row[4],
