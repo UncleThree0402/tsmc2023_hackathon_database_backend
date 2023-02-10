@@ -252,6 +252,13 @@ class Database:
     #     ]
     # }
 
+    # get user's id
+    def get_user_id_by_email(self, email):
+        with self.pool.connect() as db_conn:
+            user_id = db_conn.execute("SELECT UserID FROM Users WHERE Email= %s", email).fetchall()
+
+            return user_id[0][0]
+
     # get user data
     def get_all_user_account_email_phone_identity_plate(self):
         result = []
