@@ -277,8 +277,6 @@ class Database:
 
         return result
 
-
-
     def if_user_exist(self, email):
         users = []
         with self.pool.connect() as db_conn:
@@ -297,3 +295,41 @@ class Database:
             result.append([pas for pas in password[0]])
 
             return result[0][0]
+
+
+    def search_user(self, account):
+        users = []
+        with self.pool.connect() as db_conn:
+            basic_data = db_conn.execute("SELECT UserID, Account, Email, PhoneNumber, Identity FROM Users WHERE Account= %s", account).fetchall()
+
+            for row in basic_data:
+                cars = db_conn.execute("SELECT LicensePlate FROM Cars WHERE UserID= %s", row[0]).fetchall() 
+                data = {
+                    "userId": row[0],
+                    "account": row[1],
+                    "email": row[2],
+                    "tele": row[3],
+                    "group": row[4],
+                    "cars": []
+                }
+                # so we should turn it into list
+                for car in cars:
+                    data['cars'].append([c for c in car])
+
+                result.append(data)
+
+        return result
+
+    def if_plate_exist(self, license_plate):
+        result = []
+        with self.pool.connect() as db_conn:
+            plates = db_conn.execute("SELECT LicensePlate FROM Cars WHERE LicensePlate= %s", license_plate).fetchall()
+            
+            for plate in plates:
+                result.append([p for p in plate])
+
+            return True if len(result) > 0 else False
+
+    def update_parking_places(self, name, number, plate):
+        with self.pool.connect() as db_conn:
+            db_conn.execute("UPDATE ParkingPlaces SET LicensePlate = NULLIF(%s, '') WHERE ParkingLotName= %s AND ParkingNumber= %s", plate, name, number)
