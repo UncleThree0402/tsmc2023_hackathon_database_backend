@@ -139,6 +139,15 @@ def update_much_parking_history():
         return jsonify({'status': 404, 'info': "Body not json"})
 
 
+@app.route("/parking/history/<field>/<number>", methods=["GET"])
+def get_parking_history_place(field, number):
+    result = databaseProcessor.get_parking_history_by_place(field, number)
+    if result is not False:
+        return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
+    else:
+        return jsonify({'status': 400, 'info': "Search Failed"})
+
+
 @app.route("/parking/slot", methods=["PATCH"])
 def update_parking_place():
     if request.is_json:
@@ -157,6 +166,26 @@ def get_current_parking_slot():
         return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
     else:
         return jsonify({'status': 400, 'info': "Search Failed"})
+
+
+@app.route("/user/<email>/userid", methods=["GET"])
+def get_userid_by_email(email):
+    result = databaseProcessor.get_userid_by_email(email)
+    if result is not False:
+        return jsonify({'data': [{"userID": result}], 'status': 200, 'info': "Search Success"})
+    else:
+        return jsonify({'status': 400, 'info': "Search Failed"})
+
+
+@app.route("/reserve", methods=["POST"])
+def insert_reserve():
+    if request.is_json:
+        if databaseProcessor.insert_reserve(request.get_json()):
+            return jsonify({'status': 200, 'info': "Insert Success"})
+        else:
+            return jsonify({'status': 404, 'info': "Insert Fail"})
+    else:
+        return jsonify({'status': 404, 'info': "Body not json"})
 
 
 if __name__ == "__main__":

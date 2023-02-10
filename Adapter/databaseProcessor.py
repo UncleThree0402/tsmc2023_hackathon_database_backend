@@ -153,3 +153,42 @@ class DatabaseProcessor:
             return True
         except:
             return False
+
+    def get_userid_by_email(self, email):
+        try:
+            return self.dbConnector.get_user_id_by_email(email)
+        except:
+            return False
+
+    def get_parking_history_by_place(self, name, number):
+        try:
+            result = self.dbConnector.get_parking_history(name, number)
+            print(result)
+            return result
+        except:
+            return False
+
+    def insert_reserve(self, json_input):
+        try:
+            self.dbConnector.insert_VIP(json_input)
+            return True
+        except:
+            return False
+
+    def black_cond_one(self, plate):
+        try:
+            return self.dbConnector.violation_situation_one(plate)
+        except:
+            return False
+
+    def black_cond_two(self, plate):
+        try:
+            return self.dbConnector.violation_situation_two(plate)
+        except:
+            return False
+
+    def black_cond_three(self, plate):
+        try:
+            return self.dbConnector.violation_situation_three(plate)
+        except:
+            return False

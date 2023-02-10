@@ -510,7 +510,7 @@ class Database:
             
             return True if (actual_leave_time > time) else False
 
-    def violation_situation_three(self, plate)
+    def violation_situation_three(self, plate):
         with self.pool.connect() as db_conn:
             position = db_conn.execute("SELECT ReservationName, ReservationNumber FROM VIP WHERE LicensePlate= %s", plate).fetchall()
             if len(position[0]) == 0:
@@ -520,7 +520,7 @@ class Database:
             if len(actual_pos[0]) == 0:
                 return False
 
-            if position[0][0] == actual_pos[0][0] AND position[0][1] == actual_pos[0][1]:
+            if position[0][0] == actual_pos[0][0] and position[0][1] == actual_pos[0][1]:
                 return False
             else:
                 return True
