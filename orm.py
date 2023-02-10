@@ -395,3 +395,20 @@ class Database:
                     except:
                         result = []
         return result
+
+
+    def get_parking_lots_data(self):
+        result = []
+        with self.pool.connect() as db_conn:
+            basic_data = db_conn.execute("SELECT ParkingLotName, LongitudeAndLatitude, AvailableSpots FROM ParkingLots").fetchall()
+
+            for row in basic_data:
+                data = {
+                    "parking_lot_name": row[0],
+                    "remain": row[2],
+                    "longitude_and_latitude": row[1]
+                }
+
+                result.append(data)
+
+        return result
