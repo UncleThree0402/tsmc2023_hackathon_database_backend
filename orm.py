@@ -316,9 +316,9 @@ class Database:
                 for car in cars:
                     data['cars'].append([c for c in car])
 
-                result.append(data)
+                users.append(data)
 
-        return result
+        return users
 
     def if_plate_exist(self, license_plate):
         result = []
@@ -339,7 +339,7 @@ class Database:
             plate = one['licensePlate']
             with self.pool.connect() as db_conn:
                 db_conn.execute("UPDATE ParkingPlaces SET LicensePlate = NULLIF(%s, '') WHERE ParkingLotName= %s AND ParkingNumber= %s", plate, name, number)
-                
+
     # update parking places input
     # obj = {
     #     "data": [
@@ -376,3 +376,22 @@ class Database:
             result.append([s for s in spot])
 
         return result[0]        
+
+    def find_cars(self, json_input):
+        result = []
+        for one in json_input['data']:
+            UserID = one['userID']
+            with self.pool.connect() as db_conn:
+                cars = db_conn.execute("SELECT LicensePlate FROM Cars WHERE UserID= %s", UserID).fetchall()
+                for car in cars:
+                    name = db_conn.execute("SELECT ParkingLotName FROM ParkingPlaces WHERE LicensePlate= %s", car[0]).fetchall()
+                    number = db_conn.execute("SELECT ParkingNumber FROM ParkingPlaces WHERE LicensePlate= %s", car[0]).fetchall()
+                    try:
+                        data = {
+                            "car": car[0],
+                            "parking_place": name[0][0] + number[0][0]
+                        }
+                        result.append(data)
+                    except:
+                        result = []
+        return result
