@@ -330,9 +330,31 @@ class Database:
 
             return True if len(result) > 0 else False
 
-    def update_parking_places(self, name, number, plate):
-        with self.pool.connect() as db_conn:
-            db_conn.execute("UPDATE ParkingPlaces SET LicensePlate = NULLIF(%s, '') WHERE ParkingLotName= %s AND ParkingNumber= %s", plate, name, number)
+    
+    # give ParkingLot name, parking number, and license plate, will set the license, if no car, input ""
+    def update_parking_places(self, json_input):
+        for one in json_input['data']:
+            name = one['parkingLotName']
+            number = one['parkingNumber']
+            plate = one['licensePlate']
+            with self.pool.connect() as db_conn:
+                db_conn.execute("UPDATE ParkingPlaces SET LicensePlate = NULLIF(%s, '') WHERE ParkingLotName= %s AND ParkingNumber= %s", plate, name, number)
+                
+    # update parking places input
+    # obj = {
+    #     "data": [
+    #         {
+    #             "parkingLotName": "Q",
+    #             "parkingNumber": "000",
+    #             "licensePlate": ""
+    #         },
+    #         {
+    #             "parkingLotName": "Q",
+    #             "parkingNumber": "001",
+    #             "licensePlate": ""
+    #         }
+    #     ]
+    # }
 
     # give ParkingLot name, let its AvailableSpots += 1
     def update_plus_parking_lots(self, name):
