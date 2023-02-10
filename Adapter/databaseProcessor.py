@@ -1,3 +1,5 @@
+import uuid
+
 from orm import Database
 
 
@@ -28,14 +30,23 @@ class DatabaseProcessor:
 
     def insert_one_user(self, json_input):
         try:
+            json_input["data"][0]["userID"] = uuid.uuid4()
             self.dbConnector.insert_users(json_input)
             return True
         except:
             return False
 
-    def insert_one_car(self, json_input):
+    def insert_one_car(self, userID, plate):
         try:
-            self.dbConnector.insert_cars(json_input)
+            query = {
+                "data": [
+                    {
+                        "licensePlate": plate,
+                        "userID": userID,
+                    }
+                ]
+            }
+            self.dbConnector.insert_cars(query)
             return True
         except:
             return False
@@ -46,9 +57,8 @@ class DatabaseProcessor:
         except:
             return False
 
-    def check_user_exist(self, json_input):
+    def check_user_exist(self, email):
         try:
-            email = json_input['data'][0]["email"]
             if len(email) == 0:
                 return False
             result = self.dbConnector.if_user_exist(email)
@@ -56,12 +66,49 @@ class DatabaseProcessor:
         except:
             return False
 
-    def get_one_user_password(self,json_input):
+    def get_one_user_password(self, email):
         try:
-            email = json_input['data'][0]["email"]
             if len(email) == 0:
                 return False
             result = self.dbConnector.get_password(email)
+            return result
+        except:
+            return False
+
+    def get_one_available_packing_slot_in_field(self, field):
+        try:
+            if len(field) == 0:
+                return False
+            result = self.dbConnector.find_available_spots(field)
+            print(result)
+            return field + result[0]
+        except:
+            return False
+
+    def search_one_user(self, account):
+        try:
+            result = self.dbConnector.search_user(account)
+            return result
+        except:
+            pass
+
+    def get_parking_field(self):
+        try:
+            result = self.dbConnector.get_parking_lots_data()
+            return result
+        except:
+            return False
+
+    def get_cars_by_userId(self, userId):
+        try:
+            query = {
+                "data": [
+                    {
+                        "userID": userId
+                    }
+                ]
+            }
+            result = self.dbConnector.find_cars(query)
             return result
         except:
             return False

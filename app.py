@@ -8,8 +8,8 @@ dbConnector = Database()
 databaseProcessor = DatabaseProcessor()
 
 
-@app.route('/parkinglot', methods=['POST'])
-def insert_parking_lot():
+@app.route('/parking/field', methods=['POST'])
+def insert_parking_field():
     if request.is_json:
         if databaseProcessor.insert_one_parking_field(request.get_json()):
             return jsonify({'status': 200, 'info': "Insert Success"})
@@ -17,6 +17,15 @@ def insert_parking_lot():
             return jsonify({'status': 404, 'info': "Insert Fail"})
     else:
         return jsonify({'status': 404, 'info': "Body not json"})
+
+
+@app.route('/parking/field', methods=['GET'])
+def get_parking_field():
+    result = databaseProcessor.get_parking_field()
+    if result:
+        return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
+    else:
+        return jsonify({'status': 404, 'info': "Search Fail"})
 
 
 @app.route("/user", methods=["POST"])
@@ -30,18 +39,24 @@ def insert_user():
         return jsonify({'status': 404, 'info': "Body not json"})
 
 
-@app.route("/car", methods=["POST"])
-def insert_car():
-    if request.is_json:
-        if databaseProcessor.insert_one_car(request.get_json()):
-            return jsonify({'status': 200, 'info': "Insert Success"})
-        else:
-            return jsonify({'status': 404, 'info': "Insert Fail"})
+@app.route("/user/<userID>/car", methods=["GET"])
+def find_cars_by_id(userID):
+    result = databaseProcessor.get_cars_by_userId(userID)
+    if result is not False:
+        return jsonify({'data': result, 'status': 200, 'info': "search Success"})
     else:
-        return jsonify({'status': 404, 'info': "Body not json"})
+        return jsonify({'status': 404, 'info': "search Fail"})
 
 
-@app.route("/all-user", methods=["GET"])
+@app.route("/user/<userID>/car/<plate>", methods=["POST"])
+def insert_car(userID, plate):
+    if databaseProcessor.insert_one_car(userID, plate):
+        return jsonify({'status': 200, 'info': "Insert Success"})
+    else:
+        return jsonify({'status': 404, 'info': "Insert Fail"})
+
+
+@app.route("/user/all", methods=["GET"])
 def get_users():
     result = databaseProcessor.get_all_user()
     if result:
@@ -50,41 +65,45 @@ def get_users():
         return jsonify({'status': 404, 'info': "Search Fail"})
 
 
-@app.route("/check-user", methods=["POST"])
-def check_user():
-    if request.is_json:
-        result = databaseProcessor.check_user_exist(request.get_json())[0]
-        if result:
-            return jsonify({"data": [{"exist": result}], 'status': 200, 'info': "Search Success"})
-        else:
-            return jsonify({'status': 404, 'info': "Search Fail"})
+@app.route("/user/<email>/check", methods=["GET"])
+def check_user(email):
+    result = databaseProcessor.check_user_exist(email)
+    if result:
+        result = result[0]
+        return jsonify({"data": [{"exist": result}], 'status': 200,
+                        'info': "Search Success"})
     else:
-        return jsonify({'status': 404})
+        return jsonify({'status': 404, 'info': "Search Fail"})
 
 
-@app.route("/user-password", methods=["POST"])
-def user_password():
-    if request.is_json:
-        reqJson = request.get_json()
-        result = dbConnector.get_password(reqJson['data'][0]["email"])
-        print(result)
-        return jsonify({"data": [{
-            "exist": result
-        }],
-            'status': 200})
+@app.route("/user/<email>/password", methods=["GET"])
+def user_password(email):
+    result = databaseProcessor.get_one_user_password(email)
+    if result:
+        return jsonify({"data": [{"exist": result}],
+                        'status': 200})
     else:
-        return jsonify({'status': 304})
+        return jsonify({'status': 404, 'info': "Get Fail"})
 
 
-@app.route("/available", methods=["POST"])
-def find_available():
-    if request.is_json:
-        reqJson = request.get_json()
-        lot = reqJson["data"][0]["parking_lot"]
-        result = dbConnector.find_available_spots(lot)
-        return jsonify({'result': result, 'status': 200})
+@app.route("/parking/slot/<field>/available", methods=["GET"])
+def find_available(field):
+    result = databaseProcessor.get_one_available_packing_slot_in_field(field)
+    if result:
+        return jsonify({'data': [{"parking_slot": result}], 'status': 200, 'info': "Search Success"})
     else:
-        return jsonify({'status': 404})
+        return jsonify({'status': 404, 'info': "Search Fail"})
+
+
+@app.route("/user/search/<account>", methods=["GET"])
+def search_user(account):
+    result = databaseProcessor.search_one_user(account)
+    return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
+
+@app.route("/parking/search/<account>", methods=["PATCH"])
+def search_user(account):
+    result = databaseProcessor.search_one_user(account)
+    return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
 
 
 if __name__ == "__main__":
