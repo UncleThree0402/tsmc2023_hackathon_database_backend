@@ -421,17 +421,45 @@ class Database:
 
             for car in cars:
                 entry_time = db_conn.execute("SELECT ParkingStartTime FROM ParkingHistory WHERE LicensePlate= %s", car[2]).fetchall()
-                user_name = db_conn.execute("SELECT UserID FROM Cars WHERE LicensePlate= %s", car[2]).fetchall()
+                user_id = db_conn.execute("SELECT UserID FROM Cars WHERE LicensePlate= %s", car[2]).fetchall()
+                account = db_conn.execute("SELECT Account FROM Users WHERE UserID= %s", user_id[0][0]).fetchall()
+                email = db_conn.execute("SELECT Email FROM Users WHERE UserID= %s", user_id[0][0]).fetchall()
                 try:
                     data = {
                         "license_plate": car[2],
                         "parking_place": car[0]+car[1],
                         "entry_time": entry_time[0][0],
-                        "user_name": user_name[0][0]
+                        "user_id": user_id[0][0],
+                        "account": account[0][0],
+                        "email": email[0][0]
                     }
 
                     result.append(data)
                 except:
                     continue
 
+        return result
+
+    def get_parking_history(self, name, number):
+        result = []
+        with self.pool.connect() as db_conn: 
+            histories = db_conn.execute("SELECT LicensePlate, ParkingStartTime, ParkingEndTime FROM ParkingHistory WHERE ParkingLotName= %s AND ParkingNumber = %s", name, number).fetchall()
+            for history in histories:
+                user_id = db_conn.execute("SELECT UserID FROM Cars WHERE LicensePlate= %s", history[0]).fetchall()
+                account = db_conn.execute("SELECT Account FROM Users WHERE UserID= %s", user_id[0][0]).fetchall()
+                email = db_conn.execute("SELECT Email FROM Users WHERE UserID= %s", user_id[0][0]).fetchall()
+                try:
+                    data = {
+                        "license_plate": history[0],
+                        "entry_time": history[1],
+                        "leave_time": history[2],
+                        "user_id": user_id[0][0],
+                        "account": account[0][0],
+                        "email": email[0][0]
+                    }
+                    
+                    result.append(data)
+                except:
+                    continue
+        
         return result
