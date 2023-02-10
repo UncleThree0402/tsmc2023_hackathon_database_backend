@@ -28,12 +28,13 @@ class Database:
         )
         return conn
 
-    # insert into parking_space table
+ # insert into parking_lots table
     def insert_parking_lots(self, json_input):
         for one in json_input['data']:
             ParkingLotName = one['parkingLotName']
             AvailableSpots = one['availableSpots']
             LongitudeAndLatitude = one['longitudeAndLatitude']
+
             # insert statement
             insert_stmt = sqlalchemy.text("INSERT INTO ParkingLots (ParkingLotName, LongitudeAndLatitude, AvailableSpots)"
             + "VALUES (:ParkingLotName, NULLIF(:LongitudeAndLatitude, ''), :AvailableSpots)")
@@ -81,7 +82,6 @@ class Database:
                     PhoneNumber=PhoneNumber,
                     Identity=Identity
                 )
-
     # user input
     # obj = {
     #     "data": [
@@ -101,20 +101,16 @@ class Database:
         for one in json_input['data']:
             LicensePlate = one['licensePlate']
             UserID = one['userID']
-            ParkingStartTime = one['parkingStartTime']
-            ParkingEndTime = one['parkingEndTime']
 
             # insert statement
-            insert_stmt = sqlalchemy.text("INSERT INTO Cars (LicensePlate, UserID, ParkingStartTime, ParkingEndTime)"
-            + "VALUES (:LicensePlate, :UserID, NULLIF(:ParkingStartTime, ''), NULLIF(:ParkingEndTime, ''))")
+            insert_stmt = sqlalchemy.text("INSERT INTO Cars (LicensePlate, UserID)"
+            + "VALUES (:LicensePlate, :UserID)")
 
             with self.pool.connect() as db_conn:
                     db_conn.execute(
                         insert_stmt,
                         LicensePlate=LicensePlate,
                         UserID=UserID,
-                        ParkingStartTime=ParkingStartTime,
-                        ParkingEndTime=ParkingEndTime
                     )
 
     # car input
@@ -123,8 +119,6 @@ class Database:
     #         {
     #             "licensePlate": "1234ZZ",
     #             "userID": "abc123",
-    #             "parkingStartTime": "2023-01-01 08:10:00",
-    #             "parkingEndTime": "2023-01-01 08:44:00"
     #         }
     #     ]
     # }
@@ -209,7 +203,7 @@ class Database:
                         ReservationName=ReservationName,
                         ReservationNumber=ReservationNumber
                     )
-                
+
     # VIP input
     # obj = {
     #     "data": [
@@ -219,6 +213,41 @@ class Database:
     #             "reservationEndTime": "2023-01-02 08:10:00",
     #             "reservationName": "D",
     #             "reservationNumber": "002"
+    #         }
+    #     ]
+    # }
+
+    def insert_parking_history(self, json_input):
+        for one in json_input['data']:
+            ParkingLotName = one['parkingLotName']
+            ParkingNumber = one["parkingNumber"]
+            LicensePlate = one["licensePlate"]
+            ParkingStartTime = one['parkingStartTime']
+            ParkingEndTime = one['parkingEndTime']
+
+            # insert statement
+            insert_stmt = sqlalchemy.text("INSERT INTO ParkingHistory (ParkingLotName, ParkingNumber, LicensePlate, ParkingStartTime, ParkingEndTime)"
+            + "VALUES (:ParkingLotName, :ParkingNumber, :LicensePlate, :ParkingStartTime, NULLIF(:ParkingEndTime, ''))")
+
+            with self.pool.connect() as db_conn:
+                    db_conn.execute(
+                        insert_stmt,
+                        ParkingLotName=ParkingLotName,
+                        ParkingNumber=ParkingNumber,
+                        LicensePlate=LicensePlate,
+                        ParkingStartTime=ParkingStartTime,
+                        ParkingEndTime=ParkingEndTime
+                    )
+
+    # insert history input
+    #     obj = {
+    #     "data": [
+    #         {
+    #             "parkingLotName": "X",
+    #             "parkingNumber": "001",
+    #             "licensePlate": "1111PP",
+    #             "parkingStartTime": "2023-01-01 08:10:00",
+    #             "parkingEndTime": ""
     #         }
     #     ]
     # }
@@ -247,6 +276,7 @@ class Database:
                 result.append(data)
 
         return result
+
 
 
     def if_user_exist(self, email):
