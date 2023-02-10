@@ -356,6 +356,22 @@ class Database:
     #     ]
     # }
 
+    def update_parking_history(self, json_input):
+        for one in json_input['data']:
+            plate = one['licensePlate']
+            leave_time = one['parkingEndTime']
+            with self.pool.connect() as db_conn:
+                db_conn.execute("UPDATE ParkingHistory SET ParkingEndTime= %s WHERE LicensePlate= %s AND ISNULL(ParkingEndTime)", leave_time, plate)
+    
+    # obj = {
+    #     "data": [
+    #         {
+    #             "licensePlate": "1234ZZ",
+    #             "parkingEndTime": "2023-02-10 06:30:00"
+    #         }
+    #     ]
+    # }
+
     # give ParkingLot name, let its AvailableSpots += 1
     def update_plus_parking_lots(self, name):
         with self.pool.connect() as db_conn:
