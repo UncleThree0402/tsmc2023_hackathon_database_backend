@@ -412,3 +412,26 @@ class Database:
                 result.append(data)
 
         return result
+
+
+    def get_current_parking_list(self):
+        result = []
+        with self.pool.connect() as db_conn:
+            cars = db_conn.execute("SELECT ParkingLotName, ParkingNumber, LicensePlate FROM ParkingPlaces WHERE LicensePlate IS NOT NULL").fetchall()
+
+            for car in cars:
+                entry_time = db_conn.execute("SELECT ParkingStartTime FROM ParkingHistory WHERE LicensePlate= %s", car[2]).fetchall()
+                user_name = db_conn.execute("SELECT UserID FROM Cars WHERE LicensePlate= %s", car[2]).fetchall()
+                try:
+                    data = {
+                        "license_plate": car[2],
+                        "parking_place": car[0]+car[1],
+                        "entry_time": entry_time[0][0],
+                        "user_name": user_name[0][0]
+                    }
+
+                    result.append(data)
+                except:
+                    continue
+
+        return result
