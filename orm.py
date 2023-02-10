@@ -27,23 +27,6 @@ class Database:
         )
         return conn
 
-    # # query parking_space table
-    # def query_all_parking():
-    #     r = []
-    #     with pool.connect() as db_conn:
-    #         result = db_conn.execute("SELECT * from parking.parking_space").fetchall()
-            
-    #         # Do something with the results
-    #         for row in result:
-    #             r.append({
-    #                 "floor": row[0],
-    #                 "zone": row[1],
-    #                 "parking_number": row[2],
-    #                 "license_plate": row[3],
-    #                 "is_available": row[4]
-    #             })
-    #     return r
-
     # insert into parking_space table
     def insert_parking_lots(self, json_input):
         for one in json_input['data']:
@@ -61,16 +44,15 @@ class Database:
                     LongitudeAndLatitude=LongitudeAndLatitude,
                     AvailableSpots=AvailableSpots
                 )
-# {
-#     data : [
-#         {
-#             park :　""
-#         },{
+    # parking lots input
+    # obj = {
+    # "data": [
+    #     {
+    #         "ParkingLotName": "E",
+    #         "LongitudeAndLatitude": "",
+    #         "AvailableSpots": 300
+    #     }
+    # ]
+    # }
 
-#         }
-#     ],
 
-# }
-
-
-# insert_parking_lots('D', 400)
