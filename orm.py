@@ -486,3 +486,41 @@ class Database:
                     continue
         
         return result
+
+
+    def violation_situation_one(self, plate):
+        with self.pool.connect() as db_conn:
+            position = db_conn.execute("SELECT ParkingLotName, ParkingNumber FROM ParkingPlaces WHERE LicensePlate= %s", plate).fetchall()
+
+            reservation = db_conn.execute("SELECT LicensePlate FROM VIP WHERE ParkingLotName= %s AND ParkingNumber= %s", position[0][0], position[0][1]).fetchall()
+            if len(reservation[0]) == 0:
+                return True
+            who = reservation[0][0]
+            return False if plate == who else True
+
+    def violation_situation_two(self, plate):
+        with self.pool.connect() as db_conn:
+            time = db_conn.execute("SELECT ReservationEndTime FROM VIP WHERE LicensePlate= %s", plate).fetchall()
+            if len(time[0]) == 0:
+                return False
+            
+            actual_leave_time = db_conn.execute("SELECT ParkingEndTime FROM ParkingHistory WHERE LicensePlate= %s", plate).fetchall()
+            if len(actual_leave_time[0]) == 0:
+                return False
+            
+            return True if (actual_leave_time > time) else False
+
+    def violation_situation_three(self, plate)
+        with self.pool.connect() as db_conn:
+            position = db_conn.execute("SELECT ReservationName, ReservationNumber FROM VIP WHERE LicensePlate= %s", plate).fetchall()
+            if len(position[0]) == 0:
+                return False
+            
+            actual_pos = db_conn.execute("SELECT ParkingLotName, ParkingNumber FROM ParkingPlaces WHERE LicensePlate= %s", plate).fetchall()
+            if len(actual_pos[0]) == 0:
+                return False
+
+            if position[0][0] == actual_pos[0][0] AND position[0][1] == actual_pos[0][1]:
+                return False
+            else:
+                return True
