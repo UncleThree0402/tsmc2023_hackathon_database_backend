@@ -6,6 +6,7 @@ from google.cloud.sql.connector import Connector
 import sqlalchemy
 import pymysql
 
+
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./environment/bsid-user-group2-sa-key.json"
 
 class Database:
@@ -151,6 +152,6 @@ class Database:
 
                 result.append(data)
 
-        return json.dumps(result)
+        return result
 
 
