@@ -528,3 +528,32 @@ class Database:
     def delete_reservation(self, plate):
         with self.pool.connect() as db_conn:
             db_conn.execute("DELETE FROM VIP WHERE LicensePlate= %s", plate)
+
+    # def if_blacklisted(self, plate, cur_time):
+    #     with self.pool.connect() as db_conn:
+    #         db_conn.execute("DELETE FROM VIP WHERE LicensePlate= %s", plate)
+
+    def get_black_list(self):
+        result = []
+        with self.pool.connect() as db_conn:
+            plates = db_conn.execute("SELECT LicensePlate, BlackStartTime, BlackEndTime FROM BlackLists")
+
+            for plate in plates:
+                user_id = db_conn.execute("SELECT UserID FROM Cars WHERE LicensePlate= %s", plate[0]).fetchall()
+                account = db_conn.execute("SELECT Account FROM Users WHERE UserID= %s", user_id[0][0]).fetchall()
+                email = db_conn.execute("SELECT Email FROM Users WHERE UserID= %s", user_id[0][0]).fetchall()
+                try:
+                    data = {
+                        "user_id": user_id[0][0],
+                        "account": account[0][0],
+                        "email": email[0][0],
+                        "license_plate": plate[0],
+                        "black_start_time": plate[1],
+                        "black_end_time": plate[2]
+                    }
+                    result.append(data)
+                except:
+                    continue
+        
+        return result
+                
