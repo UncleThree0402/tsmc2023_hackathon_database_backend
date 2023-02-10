@@ -100,10 +100,52 @@ def search_user(account):
     result = databaseProcessor.search_one_user(account)
     return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
 
-@app.route("/parking/search/<account>", methods=["PATCH"])
-def search_user(account):
-    result = databaseProcessor.search_one_user(account)
-    return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
+
+@app.route("/parking/field/in/<name>", methods=["PATCH"])
+def parking_field_minus(name):
+    if databaseProcessor.parking_lots_minus(name):
+        return jsonify({'status': 200, 'info': "Change Success"})
+    else:
+        return jsonify({'status': 400, 'info': "Change Failed"})
+
+
+@app.route("/parking/field/out/<name>", methods=["PATCH"])
+def parking_field_add(name):
+    if databaseProcessor.parking_lots_add(name):
+        return jsonify({'status': 200, 'info': "Change Success"})
+    else:
+        return jsonify({'status': 400, 'info': "Change Failed"})
+
+
+@app.route("/parking/history", methods=["POST"])
+def insert_parking_history():
+    if request.is_json:
+        if databaseProcessor.insert_much_parking_history(request.get_json()):
+            return jsonify({'status': 200, 'info': "Insert Success"})
+        else:
+            return jsonify({'status': 404, 'info': "Insert Fail"})
+    else:
+        return jsonify({'status': 404, 'info': "Body not json"})
+
+
+@app.route("/parking/slot", methods=["PATCH"])
+def update_parking_place():
+    if request.is_json:
+        if databaseProcessor.update_much_parking_place(request.get_json()):
+            return jsonify({'status': 200, 'info': "Update Success"})
+        else:
+            return jsonify({'status': 404, 'info': "Update Fail"})
+    else:
+        return jsonify({'status': 404, 'info': "Body not json"})
+
+
+@app.route("/parking/slot", methods=["GET"])
+def get_current_parking_slot():
+    result = databaseProcessor.get_current_parking_list()
+    if result is not False:
+        return jsonify({'data': result, 'status': 200, 'info': "Search Success"})
+    else:
+        return jsonify({'status': 400, 'info': "Search Failed"})
 
 
 if __name__ == "__main__":

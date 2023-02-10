@@ -112,3 +112,37 @@ class DatabaseProcessor:
             return result
         except:
             return False
+
+    def parking_lots_minus(self, name):
+        try:
+            self.dbConnector.update_minus_parking_lots(name)
+            return True
+        except:
+            return False
+
+    def parking_lots_add(self, name):
+        try:
+            self.dbConnector.update_plus_parking_lots(name)
+            return True
+        except:
+            return False
+
+    def insert_much_parking_history(self, json_input):
+        try:
+            self.dbConnector.insert_parking_history(json_input)
+            return True
+        except:
+            return False
+
+    def update_much_parking_place(self, json_input):
+        try:
+            self.dbConnector.update_parking_places(json_input)
+            return True
+        except:
+            return False
+
+    def get_current_parking_list(self):
+        try:
+            return self.dbConnector.get_current_parking_list()
+        except:
+            return False
