@@ -185,3 +185,21 @@ class Database:
         return result
 
 
+    def if_user_exist(self, email):
+        users = []
+        with self.pool.connect() as db_conn:
+            userId = db_conn.execute("SELECT UserID FROM Users WHERE Email= %s", email).fetchall()
+            
+            for id in userId:
+                users.append([i for i in id])
+
+            return True if len(users) > 0 else False
+
+    def get_password(self, email):
+        result = []
+        with self.pool.connect() as db_conn:
+            password = db_conn.execute("SELECT Password FROM Users WHERE Email= %s", email).fetchall()
+
+            result.append([pas for pas in password[0]])
+
+            return result[0][0]
