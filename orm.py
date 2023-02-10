@@ -159,6 +159,70 @@ class Database:
     #     ]
     # }
 
+    def insert_black_lists(self, json_input):
+        for one in json_input['data']:
+            LicensePlate = one['licensePlate']
+            BlackStartTime = one["blackStartTime"]
+            BlackEndTime = one["blackEndTime"]
+
+        # insert statement
+        insert_stmt = sqlalchemy.text("INSERT INTO BlackLists (LicensePlate, BlackStartTime, BlackEndTime)"
+        + "VALUES (:LicensePlate, :BlackStartTime, :BlackEndTime)")
+
+        with self.pool.connect() as db_conn:
+                db_conn.execute(
+                    insert_stmt,
+                    LicensePlate=LicensePlate,
+                    BlackStartTime=BlackStartTime,
+                    BlackEndTime=BlackEndTime,
+                )
+
+    # black list input
+    # obj = {
+    #     "data": [
+    #         {
+    #             "licensePlate": "9282ZN",
+    #             "blackStartTime": '2023-01-01 08:10:00',
+    #             "blackEndTime": '2023-01-02 08:10:00'
+    #         }
+    #     ]
+    # }
+
+    def insert_VIP(self, json_input):
+        for one in json_input['data']:
+            LicensePlate = one['licensePlate']
+            ReservationStartTime = one["reservationStartTime"]
+            ReservationEndTime = one["reservationEndTime"]
+            ReservationName = one["reservationName"]
+            ReservationNumber = one["reservationNumber"]
+
+        # insert statement
+        insert_stmt = sqlalchemy.text("INSERT INTO VIP (LicensePlate, ReservationStartTime, ReservationEndTime, ReservationName, ReservationNumber)"
+        + "VALUES (:LicensePlate, :ReservationStartTime, :ReservationEndTime, :ReservationName, :ReservationNumber)")
+
+        with self.pool.connect() as db_conn:
+                db_conn.execute(
+                    insert_stmt,
+                    LicensePlate=LicensePlate,
+                    ReservationStartTime=ReservationStartTime,
+                    ReservationEndTime=ReservationEndTime,
+                    ReservationName=ReservationName,
+                    ReservationNumber=ReservationNumber
+                )
+                
+    # VIP input
+    # obj = {
+    #     "data": [
+    #         {
+    #             "licensePlate": "9282ZN",
+    #             "reservationStartTime": "2023-01-01 08:10:00",
+    #             "reservationEndTime": "2023-01-02 08:10:00",
+    #             "reservationName": "D",
+    #             "reservationNumber": "002"
+    #         }
+    #     ]
+    # }
+
     # get user data
     def get_all_user_account_email_phone_identity_plate(self):
         result = []
