@@ -146,3 +146,10 @@ class DatabaseProcessor:
             return self.dbConnector.get_current_parking_list()
         except:
             return False
+
+    def update_much_parking_history(self, json_input):
+        try:
+            self.dbConnector.update_parking_history(json_input)
+            return True
+        except:
+            return False

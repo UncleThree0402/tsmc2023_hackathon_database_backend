@@ -128,6 +128,17 @@ def insert_parking_history():
         return jsonify({'status': 404, 'info': "Body not json"})
 
 
+@app.route("/parking/history", methods=["PATCH"])
+def update_much_parking_history():
+    if request.is_json:
+        if databaseProcessor.update_much_parking_history(request.get_json()):
+            return jsonify({'status': 200, 'info': "Update Success"})
+        else:
+            return jsonify({'status': 404, 'info': "Update Fail"})
+    else:
+        return jsonify({'status': 404, 'info': "Body not json"})
+
+
 @app.route("/parking/slot", methods=["PATCH"])
 def update_parking_place():
     if request.is_json:
