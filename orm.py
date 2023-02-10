@@ -129,3 +129,28 @@ class Database:
     # }
 
 
+    # get user data
+    def get_all_user_account_email_phone_identity_plate(self):
+        result = []
+        with self.pool.connect() as db_conn:
+            basic_data = db_conn.execute("SELECT UserID, Account, Email, PhoneNumber, Identity FROM Users").fetchall()
+
+            for row in basic_data:
+                # this is car instance, not a list
+                cars = db_conn.execute("SELECT LicensePlate FROM Cars WHERE UserID= %s", row[0]).fetchall() 
+                data = {
+                    "userId": row[1],
+                    "email": row[2],
+                    "tele": row[3],
+                    "group": row[4],
+                    "cars": []
+                }
+                # so we should turn it into list
+                for car in cars:
+                    data['cars'].append([c for c in car])
+
+                result.append(data)
+
+        return json.dumps(result)
+
+
