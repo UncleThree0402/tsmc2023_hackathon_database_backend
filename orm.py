@@ -129,6 +129,35 @@ class Database:
     #     ]
     # }
 
+    # insert parking_place table
+    def insert_parking_places(self, json_input):
+        for one in json_input['data']:
+            ParkingLotName = one['parkingLotName']
+            ParkingNumber = one["parkingNumber"]
+            LicensePlate = one["licensePlate"]
+
+        # insert statement
+        insert_stmt = sqlalchemy.text("INSERT INTO ParkingPlaces (ParkingLotName, ParkingNumber, LicensePlate)"
+        + "VALUES (:ParkingLotName, :ParkingNumber, NULLIF(:LicensePlate, ''))")
+
+        with self.pool.connect() as db_conn:
+                db_conn.execute(
+                    insert_stmt,
+                    ParkingLotName=ParkingLotName,
+                    ParkingNumber=ParkingNumber,
+                    LicensePlate=LicensePlate,
+                )
+
+    # parking place input
+    # obj = {
+    #     "data": [
+    #         {
+    #             "parkingLotName": "D",
+    #             "parkingNumber": "002",
+    #             "licensePlate": "9282ZN"
+    #         }
+    #     ]
+    # }
 
     # get user data
     def get_all_user_account_email_phone_identity_plate(self):
