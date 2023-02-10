@@ -333,3 +333,24 @@ class Database:
     def update_parking_places(self, name, number, plate):
         with self.pool.connect() as db_conn:
             db_conn.execute("UPDATE ParkingPlaces SET LicensePlate = NULLIF(%s, '') WHERE ParkingLotName= %s AND ParkingNumber= %s", plate, name, number)
+
+    # give ParkingLot name, let its AvailableSpots += 1
+    def update_plus_parking_lots(self, name):
+        with self.pool.connect() as db_conn:
+            current = db_conn.execute("SELECT AvailableSpots FROM ParkingLots WHERE ParkingLotName= %s", name).fetchall()
+            db_conn.execute("UPDATE ParkingLots SET AvailableSpots= %s WHERE ParkingLotName= %s", current[0][0]+1, name)
+
+    # give ParkingLot name, let its AvailableSpots -= 1
+    def update_minus_parking_lots(self, name):
+        with self.pool.connect() as db_conn:
+            current = db_conn.execute("SELECT AvailableSpots FROM ParkingLots WHERE ParkingLotName= %s", name).fetchall()
+            db_conn.execute("UPDATE ParkingLots SET AvailableSpots= %s WHERE ParkingLotName= %s", current[0][0]-1, name)
+    
+    # give ParkingLot name, return a parking number
+    def find_available_spots(self, name):
+        result = []
+        with self.pool.connect() as db_conn:
+            spot = db_conn.execute("SELECT ParkingNumber FROM ParkingPlaces WHERE ParkingLotName= %s AND ISNULL(LicensePlate)", name).fetchone()
+            result.append([s for s in spot])
+
+        return result[0]        
