@@ -188,5 +188,28 @@ def insert_reserve():
         return jsonify({'status': 404, 'info': "Body not json"})
 
 
+@app.route("/check/<plate>", methods=["GET"])
+def checking(plate):
+    one = databaseProcessor.black_cond_one(plate)
+    two = databaseProcessor.black_cond_two(plate)
+    three = databaseProcessor.black_cond_three(plate)
+    return jsonify({'data': [{
+        "one": one,
+        "two": two,
+        "three": three
+    }], 'status': 200, 'info': "Body not json"})
+
+
+@app.route("/black", methods=["POST"])
+def insert_backlist():
+    if request.is_json:
+        if databaseProcessor.insert_black_list(request.get_json()):
+            return jsonify({'status': 200, 'info': "Insert Success"})
+        else:
+            return jsonify({'status': 404, 'info': "Insert Fail"})
+    else:
+        return jsonify({'status': 404, 'info': "Body not json"})
+
+
 if __name__ == "__main__":
     app.run()

@@ -192,3 +192,16 @@ class DatabaseProcessor:
             return self.dbConnector.violation_situation_three(plate)
         except:
             return False
+
+    def insert_black_list(self, json_input):
+        try:
+            self.dbConnector.insert_black_lists(json_input)
+            return True
+        except:
+            return False
+
+    def get_black_list(self):
+        try:
+            return self.dbConnector.get_black_list()
+        except:
+            return False
