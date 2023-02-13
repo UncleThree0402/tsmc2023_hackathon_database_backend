@@ -201,7 +201,7 @@ def checking(plate):
 
 
 @app.route("/black", methods=["POST"])
-def insert_backlist():
+def insert_blackList():
     if request.is_json:
         if databaseProcessor.insert_black_list(request.get_json()):
             return jsonify({'status': 200, 'info': "Insert Success"})
@@ -209,6 +209,15 @@ def insert_backlist():
             return jsonify({'status': 404, 'info': "Insert Fail"})
     else:
         return jsonify({'status': 404, 'info': "Body not json"})
+
+
+@app.route("/black", methods=["GET"])
+def get_blackList():
+    result = databaseProcessor.get_black_list()
+    if result is not False:
+        return jsonify({"data": result, 'status': 200, 'info': "Search Success"})
+    else:
+        return jsonify({'status': 404, 'info': "Search Fail"})
 
 
 if __name__ == "__main__":
